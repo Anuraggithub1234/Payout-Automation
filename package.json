@@ -1,0 +1,47 @@
+{
+  "name": "benepay-automation",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Scalable Playwright-based test automation framework for BenePay including sequential execution, reporting, session management, and Excel report generation.",
+  "scripts": {
+    "test": "playwright test",
+    "test:list": "playwright test --list",
+    "test:headed": "playwright test --headed",
+    "test:sequence": "tsx test-sequence-runner.ts",
+    "report:excel": "tsx generate-excel-report.ts",
+    "update:imports": "tsx update-imports.ts",
+    "save:session": "tsx tests/utils/save-session.ts",
+    "save:session:admin": "tsx tests/utils/save-session.ts admin",
+    "save:session:approver1": "tsx tests/utils/save-session.ts approver1",
+    "save:session:approver2": "tsx tests/utils/save-session.ts approver2",
+    "capture:client-approval-policy": "playwright test tests/clients/capture-client-approval-policy.spec.ts",
+    "test:sequence:list": "tsx test-sequence-runner.ts --list",
+    "test:sequence:all": "tsx test-sequence-runner.ts all",
+    "test:sequence:smoke": "tsx test-sequence-runner.ts smoke",
+    "test:sequence:custom": "tsx test-sequence-runner.ts custom",
+    "test:sequence:client-policy": "tsx test-sequence-runner.ts clientApprovalPolicy",
+    "test:sequence:clients": "tsx test-sequence-runner.ts clients",
+    "test:sequence:create-invoices": "tsx test-sequence-runner.ts createInvoices",
+    "test:sequence:upload-invoices": "tsx test-sequence-runner.ts uploadInvoices",
+    "test:sequence:payments": "tsx test-sequence-runner.ts payments",
+    "test:sequence:suppliers": "tsx test-sequence-runner.ts suppliers",
+    "test:sequence:approvals": "tsx test-sequence-runner.ts approvals"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.59.1",
+    "@types/node": "^25.6.0",
+    "@types/pdfkit": "^0.17.6",
+    "dotenv": "^17.4.2",
+    "otpauth": "^9.5.0",
+    "tsx": "^4.22.4",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "chalk": "^5.6.2",
+    "exceljs": "^4.4.0",
+    "pdfkit": "^0.18.0"
+  }
+}

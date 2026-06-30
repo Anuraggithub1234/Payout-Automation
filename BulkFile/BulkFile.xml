@@ -1,0 +1,119 @@
+<Document xmlns="urn:iso:std:iso:20022:tech:xsd:pain.001.001.09"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <CstmrCdtTrfInitn>
+
+        <GrpHdr>
+            <!-- Validation 1: Change this MsgId for each test run to avoid duplicate detection -->
+            <MsgId>A-GLH-266-30-03</MsgId>
+            <CreDtTm>2026-03-02T10:30:00</CreDtTm>
+            <!-- Validation 2: NbOfTxs MUST equal actual number of CdtTrfTxInf nodes below -->
+            <NbOfTxs>1</NbOfTxs>
+            <CtrlSum>400.00</CtrlSum>
+            <InitgPty>
+                <Id>
+                    <OrgId>
+                        <Othr>
+                            <!-- Validation 3: Replace 12345 with the integer clientId sent in the API request -->
+                            <Id>172</Id>
+                        </Othr>
+                    </OrgId>
+                </Id>
+            </InitgPty>
+        </GrpHdr>
+
+        <PmtInf>
+            <PmtInfId>PMTINF-TEST-001</PmtInfId>
+            <PmtMtd>TRF</PmtMtd>
+            <NbOfTxs>1</NbOfTxs>
+            <CtrlSum>400.00</CtrlSum>
+            <ReqdExctnDt>
+                <Dt>2026-03-05</Dt>
+            </ReqdExctnDt>
+
+            <Dbtr>
+                <Id>
+                    <OrgId>
+                        <Othr>
+                            <!-- Validation 4: Same clientId as InitgPty above -->
+                            <Id>172</Id>
+                        </Othr>
+                    </OrgId>
+                </Id>
+            </Dbtr>
+
+            <DbtrAcct>
+                <Id>
+                    <Othr>
+                        <Id>4170</Id>
+                    </Othr>
+                </Id>
+                <!-- Validation 5: Must be in client's allowed currencies AND match selectedCurrency -->
+                <Ccy>GBP</Ccy>
+            </DbtrAcct>
+
+            <DbtrAgt>
+                <FinInstnId>
+                    <Nm>BenePay</Nm>
+                </FinInstnId>
+            </DbtrAgt>
+
+            <!-- ==================== Transaction 1 ==================== -->
+            <CdtTrfTxInf>
+                <PmtId>
+                    <EndToEndId>E2E-TEST-VALID-001</EndToEndId>
+                </PmtId>
+
+                <Amt>
+                    <!-- Validation 6: > 0, ≤ 999999999999.99, uses '.' decimal separator -->
+                    <InstdAmt Ccy="GBP">400.00</InstdAmt>
+                </Amt>
+
+                <CdtrAgt>
+                    <FinInstnId>
+                        <!-- Validation 7: Valid BICFI – 8 chars, matches [A-Z]{6}[A-Z0-9]{2} -->
+                        <BICFI>PNCCUS33</BICFI>
+                        <ClrSysMmbId>
+                            <MmbId>043002</MmbId>
+                        </ClrSysMmbId>
+                        <Nm>PNC Bank, Pittsburgh</Nm>
+                        <PstlAdr>
+                            <!-- Validation 8: Valid ISO alpha-2; must match ALL other CdtrAgt countries -->
+                            <Ctry>US</Ctry>
+                        </PstlAdr>
+                    </FinInstnId>
+                </CdtrAgt>
+
+                <Cdtr>
+                    <Nm>Rana Vaibhav</Nm>
+                    <PstlAdr>
+                        <StrtNm>Bandon Rise</StrtNm>
+                        <BldgNb>1</BldgNb>
+                        <PstCd>15057</PstCd>
+                        <TwnNm>Mcdonald</TwnNm>
+                        <CtrySubDvsn>PA</CtrySubDvsn>
+                        <!-- Validation 9: Valid ISO alpha-2 country code -->
+                        <Ctry>US</Ctry>
+                    </PstlAdr>
+                </Cdtr>
+
+                <CdtrAcct>
+                    <Id>
+                        <!-- No IBAN → Validation 10 is skipped for this transaction -->
+                        <Othr>
+                            <Id>39015561</Id>
+                        </Othr>
+                    </Id>
+                </CdtrAcct>
+
+                <Purp>
+                    <Cd>SUPP</Cd>
+                </Purp>
+
+                <RmtInf>
+                    <Ustrd>Payment for Invoice INV-2026-001</Ustrd>
+                </RmtInf>
+            </CdtTrfTxInf>
+
+        </PmtInf>
+    </CstmrCdtTrfInitn>
+</Document>
