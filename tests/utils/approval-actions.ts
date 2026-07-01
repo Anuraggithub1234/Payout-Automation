@@ -219,6 +219,7 @@ async function approvePendingApprovalSection(
   await expect(
     page.getByRole('heading', { name: /Approval Management/i })
   ).toBeVisible({ timeout: 30_000 });
+  await ensurePendingApprovalTab(page);
 
   const pendingRow = await waitForActionableApprovalRow(
     page,
@@ -257,6 +258,7 @@ async function approvePendingApprovalSectionByCheckbox(
   await expect(
     page.getByRole('heading', { name: /Approval Management/i })
   ).toBeVisible({ timeout: 30_000 });
+  await ensurePendingApprovalTab(page);
 
   const pendingRow = await waitForActionableApprovalRow(
     page,
@@ -295,6 +297,27 @@ async function expectApprovedTab(page: Page): Promise<void> {
   await expect(approvedTab).toHaveAttribute('aria-selected', 'true', {
     timeout: 30_000,
   });
+}
+
+async function ensurePendingApprovalTab(page: Page): Promise<void> {
+  const pendingTab = page.getByRole('tab', { name: /^Pending Approval$/i });
+
+  if (await pendingTab.isVisible().catch(() => false)) {
+    if ((await pendingTab.getAttribute('aria-selected')) !== 'true') {
+      await pendingTab.click();
+    }
+
+    await expect(pendingTab).toHaveAttribute('aria-selected', 'true', {
+      timeout: 15_000,
+    });
+    return;
+  }
+
+  const pendingButton = page.getByText(/^Pending Approval$/i).first();
+
+  if (await pendingButton.isVisible().catch(() => false)) {
+    await pendingButton.click();
+  }
 }
 
 async function handleReleaseDateValidationIfNeeded(
@@ -400,6 +423,7 @@ async function refreshApprovalPage(page: Page): Promise<void> {
   await expect(
     page.getByRole('heading', { name: /Approval Management/i })
   ).toBeVisible({ timeout: 30_000 });
+  await ensurePendingApprovalTab(page);
   await page.waitForTimeout(approvalLookupPollMs);
 }
 

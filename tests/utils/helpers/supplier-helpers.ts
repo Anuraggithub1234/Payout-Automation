@@ -163,6 +163,23 @@ export async function expectSupplierActivationResult(page: Page): Promise<void> 
   });
 }
 
+export async function closeSupplierDialog(page: Page): Promise<void> {
+  const dialog = page
+    .locator('[role="dialog"], [class*="modal"], [class*="dialog"]')
+    .filter({ hasText: /Add Supplier|Edit Supplier/i })
+    .last();
+
+  const namedCloseButton = dialog.getByRole('button', { name: /close/i }).first();
+
+  if (await namedCloseButton.isVisible().catch(() => false)) {
+    await namedCloseButton.click();
+  } else {
+    await page.keyboard.press('Escape');
+  }
+
+  await expect(dialog).toBeHidden({ timeout: 10_000 });
+}
+
 function getAddressSection(page: Page, sectionName: string): Locator {
   return page
     .getByText(sectionName, { exact: true })

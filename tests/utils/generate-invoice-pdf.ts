@@ -32,6 +32,27 @@ function deleteOldPdfFiles(): void {
   }
 }
 
+function deleteFilesInDirectory(directoryPath: string): void {
+  if (!fs.existsSync(directoryPath)) {
+    return;
+  }
+
+  for (const file of fs.readdirSync(directoryPath)) {
+    const filePath = path.join(directoryPath, file);
+    const stat = fs.statSync(filePath);
+
+    if (!stat.isFile()) {
+      continue;
+    }
+
+    try {
+      fs.unlinkSync(filePath);
+    } catch (error: any) {
+      if (error.code !== 'EBUSY') throw error;
+    }
+  }
+}
+
 function formatDate(date: Date): string {
   return new Intl.DateTimeFormat('en-GB', {
     day: '2-digit',
@@ -146,6 +167,7 @@ export async function generateBrowserInvoicePdf(
   );
 
   fs.mkdirSync(generatedInvoicesDir, { recursive: true });
+  deleteFilesInDirectory(generatedInvoicesDir);
 
   const invoiceNumber = `INV-${Date.now()}`;
   const supplierName = options.supplierName ?? invoiceData.supplierName;

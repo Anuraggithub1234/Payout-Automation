@@ -56,11 +56,7 @@ test('Upload invoice + approve invoice + create batch + approve batch', async ({
       timeout: 60_000,
     });
 
-    await fillUploadInvoiceExtractedDetails(
-      page,
-      invoiceData,
-      invoiceData.accounting.glCode
-    );
+    await fillUploadInvoiceExtractedDetails(page, invoiceData);
     await selectAllVisibleUploadInvoiceTaxTypes(
       page,
       invoiceData.lineItem.taxType

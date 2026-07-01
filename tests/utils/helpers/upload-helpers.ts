@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { expect, type Page } from '@playwright/test';
+import { expect, type Locator, type Page } from '@playwright/test';
 import { BASE_URL } from '../config.js';
 import type { InvoiceData } from '../test-data/invoice-data.js';
 import {
@@ -148,9 +148,7 @@ export async function selectUploadInvoiceGlCodeIfVisible(
   page: Page,
   glCode: string
 ): Promise<boolean> {
-  const glCodeCombobox = page
-    .getByRole('combobox')
-    .filter({ hasText: 'Select GL code' });
+  const glCodeCombobox = uploadInvoiceGlCodeCombobox(page);
 
   if (!(await glCodeCombobox.isVisible().catch(() => false))) {
     return false;
@@ -160,9 +158,9 @@ export async function selectUploadInvoiceGlCodeIfVisible(
   await clickVisibleDropdownOption(page, glCode);
 
   await expect(
-    page.getByRole('combobox').filter({ hasText: optionName(glCode) }),
+    glCodeCombobox,
     `GL code was visible but did not get selected: ${glCode}`
-  ).toBeVisible({ timeout: 10_000 });
+  ).toContainText(optionName(glCode), { timeout: 10_000 });
 
   await applySameGlCodeForAllLineItems(page);
   return true;
@@ -172,9 +170,7 @@ export async function selectAnyUploadInvoiceGlCodeIfVisible(
   page: Page,
   preferredGlCode?: string
 ): Promise<boolean> {
-  const glCodeCombobox = page
-    .getByRole('combobox')
-    .filter({ hasText: 'Select GL code' });
+  const glCodeCombobox = uploadInvoiceGlCodeCombobox(page);
 
   if (!(await glCodeCombobox.isVisible().catch(() => false))) {
     return false;
@@ -188,6 +184,14 @@ export async function selectAnyUploadInvoiceGlCodeIfVisible(
 
   await applySameGlCodeForAllLineItems(page);
   return true;
+}
+
+function uploadInvoiceGlCodeCombobox(page: Page): Locator {
+  return page
+    .locator(
+      `xpath=(//*[normalize-space()='Apply same GL code for all line items']/following::*[@role='combobox'])[1]`
+    )
+    .first();
 }
 
 async function selectOptionalUploadInvoiceComboboxByLabel(

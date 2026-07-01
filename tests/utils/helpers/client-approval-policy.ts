@@ -28,7 +28,7 @@ export type ClientApprovalPolicy = {
 
 export const CLIENT_APPROVAL_POLICY_FILE = path.join(
   process.cwd(),
-  'playwright-user-data',
+  'runtime-data',
   'client-approval-policy.json'
 );
 
@@ -162,22 +162,32 @@ async function readApprovalFieldsFromPage(
   const fields = await page.evaluate(() => {
     const clean = (text?: string | null) =>
       (text ?? '').replace(/\s+/g, ' ').trim();
+    const canonicalApprovalLabel = (text: string) => {
+      const normalizedText = clean(text).replace(/\s*(4|6)\s*Eye$/i, '').trim();
+      const knownLabels = [
+        'Invoice Approvals',
+        'Funding Request Approval',
+        'Batch Approval',
+        'Bulk File Cancellation Approval',
+        'Bank Account Approval',
+        'Bank Account Deactivation Approval',
+        'Approve Supplier',
+        'Supplier Approval',
+      ];
+
+      return knownLabels.find(label => normalizedText === label) ?? '';
+    };
     const allElements = Array.from(document.querySelectorAll<HTMLElement>('*'));
     const approvalLabels = allElements.filter(element => {
-      const text = clean(element.textContent);
-      return (
-        /Approvals?/i.test(text) &&
-        text.length > 0 &&
-        text.length <= 80 &&
-        !/Approval Management|Pending Approvals|Approved Today/i.test(text)
-      );
+      const label = canonicalApprovalLabel(clean(element.textContent));
+      return Boolean(label);
     });
 
     const uniqueLabels = new Map<string, HTMLElement>();
 
     for (const label of approvalLabels) {
-      const text = clean(label.textContent);
-      if (!uniqueLabels.has(text)) {
+      const text = canonicalApprovalLabel(clean(label.textContent));
+      if (text && !uniqueLabels.has(text)) {
         uniqueLabels.set(text, label);
       }
     }
@@ -202,7 +212,7 @@ async function readApprovalFieldsFromPage(
         const element = allElements[index];
         const text = clean(element.textContent);
 
-        if (/Approvals?/i.test(text) && text.length <= 80) {
+        if (canonicalApprovalLabel(text)) {
           return '';
         }
 
@@ -251,9 +261,13 @@ function serviceFromApprovalLabel(label: string): ApprovalService | undefined {
   if (/supplier.*bank|bank.*account/.test(normalizedLabel)) {
     return 'supplierBankAccount';
   }
-  if (/supplier/.test(normalizedLabel)) return 'supplier';
+  if (/approve supplier|supplier approval/.test(normalizedLabel)) {
+    return 'supplier';
+  }
+  if (/batch approval|payment.*batch|payment batch/.test(normalizedLabel)) {
+    return 'paymentBatch';
+  }
   if (/bulk.*payment/.test(normalizedLabel)) return 'bulkPayment';
-  if (/payment.*batch|payment/.test(normalizedLabel)) return 'paymentBatch';
 
   return undefined;
 }

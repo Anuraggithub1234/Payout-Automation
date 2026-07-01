@@ -4,7 +4,7 @@
 
         <GrpHdr>
             <!-- Validation 1: Change this MsgId for each test run to avoid duplicate detection -->
-            <MsgId>A-GLH-266-30-06</MsgId>
+            <MsgId>A-GLH-267-01-01</MsgId>
             <CreDtTm>2026-03-02T10:30:00</CreDtTm>
             <!-- Validation 2: NbOfTxs MUST equal actual number of CdtTrfTxInf nodes below -->
             <NbOfTxs>1</NbOfTxs>

@@ -116,10 +116,10 @@ npm run capture:client-approval-policy
 This reads `CLIENT_NAME`, opens the client details screen, captures service approval fields, and writes:
 
 ```text
-playwright-user-data/client-approval-policy.json
+runtime-data/client-approval-policy.json
 ```
 
-Approval tests read this file to decide whether one or two approver sessions are required. It is stored in `playwright-user-data` because Playwright cleans `test-results` before separate test runs.
+Approval tests read this file to decide whether one or two approver sessions are required. It is stored in `runtime-data` because Playwright cleans `test-results` before separate test runs.
 
 ## Test Sequence Control
 
@@ -259,7 +259,7 @@ node_modules/
 .auth/
 test-results/
 playwright-report/
-playwright-user-data/
+runtime-data/
 all-results.json
 .last-run.json
 ```

@@ -2,6 +2,7 @@ import { test } from '../utils/admin-fixture.js';
 import 'dotenv/config';
 import {
   addSupplierBankAccount,
+  closeSupplierDialog,
   expectSupplierActivationResult,
   fillRandomSupplierAddress,
   fillRandomSupplierDetails,
@@ -23,7 +24,7 @@ test('Add supplier with random data', async ({ page }) => {
   await addSupplierBankAccount(page);
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByRole('button', { name: 'Activate' }).click();
-  await page.getByRole('button', { name: 'Activate' }).click();
   await expectSupplierActivationResult(page);
+  await closeSupplierDialog(page);
 });
 
