@@ -109,12 +109,19 @@ export async function fillAccountingInformation(
     'Version',
     data.accounting.version
   );
+  const adminSelected = await selectOptionalComboboxByLabelAfterSection(
+    page,
+    'Accounting Information',
+    'Admin',
+    data.accounting.admin
+  );
 
   if (
     productionTypeSelected ||
     customerSelected ||
     venueSelected ||
-    versionSelected
+    versionSelected ||
+    adminSelected
   ) {
     await applySameTrackingCategoriesForAllLineItems(page);
     return;
@@ -128,6 +135,7 @@ export async function fillAccountingInformation(
   await selectOptionalLineItemDropdown(page, 'Customer', data.accounting.customer);
   await selectOptionalLineItemDropdown(page, 'Venue', data.accounting.venue);
   await selectOptionalLineItemDropdown(page, 'Version', data.accounting.version);
+  await selectOptionalLineItemDropdown(page, 'Admin', data.accounting.admin);
 }
 
 export async function selectAccountingInformationGlCode(

@@ -4,7 +4,7 @@
 
         <GrpHdr>
             <!-- Validation 1: Change this MsgId for each test run to avoid duplicate detection -->
-            <MsgId>A-GLH-266-30-03</MsgId>
+            <MsgId>A-GLH-266-30-05</MsgId>
             <CreDtTm>2026-03-02T10:30:00</CreDtTm>
             <!-- Validation 2: NbOfTxs MUST equal actual number of CdtTrfTxInf nodes below -->
             <NbOfTxs>1</NbOfTxs>
@@ -14,7 +14,7 @@
                     <OrgId>
                         <Othr>
                             <!-- Validation 3: Replace 12345 with the integer clientId sent in the API request -->
-                            <Id>172</Id>
+                            <Id>178</Id>
                         </Othr>
                     </OrgId>
                 </Id>
@@ -35,7 +35,7 @@
                     <OrgId>
                         <Othr>
                             <!-- Validation 4: Same clientId as InitgPty above -->
-                            <Id>172</Id>
+                            <Id>178</Id>
                         </Othr>
                     </OrgId>
                 </Id>

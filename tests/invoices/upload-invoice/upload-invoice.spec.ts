@@ -4,11 +4,12 @@ import { generateBrowserInvoicePdf } from '../../utils/generate-invoice-pdf.js';
 import {
   fillSupplierInvoiceNumber,
   generateInvoiceNumber,
+  selectFirstSupplierAccountIfVisible,
   submitInvoice,
 } from '../../utils/helpers/invoice-helpers.js';
 import {
+  expectUploadInvoiceSubmittedForApproval,
   fillUploadInvoiceExtractedDetails,
-  fillUploadInvoiceAmountField,
   uploadInvoicePdf,
   waitForUploadedInvoiceForm,
 } from '../../utils/helpers/upload-helpers.js';
@@ -27,20 +28,7 @@ test('Upload new invoice', async ({ page }) => {
     invoiceData,
     invoiceData.accounting.uploadGlCode
   );
-  await fillUploadInvoiceAmountField(
-    page,
-    'Commission / Discount:',
-    invoiceData.upload.commissionDiscount
-  );
-  await fillUploadInvoiceAmountField(
-    page,
-    'VAT / Tax Amount (as read from invoice):',
-    invoiceData.upload.vatTaxAmount
-  );
-  await fillUploadInvoiceAmountField(
-    page,
-    'Advance Paid:',
-    invoiceData.upload.advancePaid
-  );
+  await selectFirstSupplierAccountIfVisible(page);
   await submitInvoice(page);
+  await expectUploadInvoiceSubmittedForApproval(page);
 });

@@ -14,6 +14,7 @@ import {
   comboboxByLabel,
   optionName,
   selectComboboxByLabel,
+  xpathLiteral,
 } from './form-helpers.js';
 
 export async function uploadFileByInput(
@@ -97,6 +98,33 @@ export async function fillUploadInvoiceExtractedDetails(
   await selectComboboxByLabel(page, 'Supplier', data.supplierName);
   await selectUploadInvoiceGlCodeIfVisible(page, glCode);
   await selectUploadInvoiceTrackingCategoriesIfConfigured(page, data);
+  await selectAllVisibleUploadInvoiceTaxTypes(page, data.lineItem.taxType);
+}
+
+export async function expectUploadInvoiceSubmittedForApproval(
+  page: Page
+): Promise<void> {
+  const submitResultAlert = page
+    .getByRole('alert')
+    .filter({
+      hasNotText: /Please check total tax amounts before submitting/i,
+    })
+    .last();
+
+  await expect(submitResultAlert).toBeVisible({ timeout: 30_000 });
+
+  const submitResultText = (await submitResultAlert.innerText())
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  expect(
+    submitResultText,
+    `Invoice submit did not succeed. Toast shown: ${submitResultText}`
+  ).toMatch(/Invoice created successfully.*submitted for approval/i);
+
+  await expect(
+    page.getByRole('button', { name: /^Upload New Invoice$/ })
+  ).toBeVisible({ timeout: 30_000 });
 }
 
 export async function fillUploadInvoiceDetailsExceptSupplier(
@@ -132,7 +160,7 @@ export async function selectUploadInvoiceGlCodeIfVisible(
   await clickVisibleDropdownOption(page, glCode);
 
   await expect(
-    page.getByRole('combobox').filter({ hasText: optionName(glCode) }).first(),
+    page.getByRole('combobox').filter({ hasText: optionName(glCode) }),
     `GL code was visible but did not get selected: ${glCode}`
   ).toBeVisible({ timeout: 10_000 });
 
@@ -205,12 +233,18 @@ export async function selectUploadInvoiceTrackingCategoriesIfConfigured(
     'Version',
     data.accounting.version
   );
+  const adminSelected = await selectOptionalUploadInvoiceComboboxByLabel(
+    page,
+    'Admin',
+    data.accounting.admin
+  );
 
   if (
     productionTypeSelected ||
     customerSelected ||
     venueSelected ||
-    versionSelected
+    versionSelected ||
+    adminSelected
   ) {
     await applySameTrackingCategoriesForAllLineItems(page);
   }
@@ -220,9 +254,10 @@ export async function selectAllVisibleUploadInvoiceTaxTypes(
   page: Page,
   taxType: string
 ): Promise<void> {
-  const taxDropdowns = page
-    .getByRole('combobox')
-    .filter({ hasText: /Select type|GB\./i });
+  const taxTypeLabel = xpathLiteral('Tax Type');
+  const taxDropdowns = page.locator(
+    `xpath=//*[normalize-space()=${taxTypeLabel}]/following::*[@role="combobox"][1]`
+  );
   const count = await taxDropdowns.count();
 
   if (count === 0) {
@@ -242,6 +277,7 @@ export async function selectAllVisibleUploadInvoiceTaxTypes(
       continue;
     }
 
+    await dropdown.scrollIntoViewIfNeeded();
     await dropdown.click();
     await clickVisibleDropdownOption(page, taxType);
     await expect(dropdown).toContainText(optionName(taxType), {

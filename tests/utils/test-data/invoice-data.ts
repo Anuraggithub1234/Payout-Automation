@@ -26,6 +26,7 @@ export const invoiceData = {
     customer: activeMerchantProfile.accounting.customer,
     venue: activeMerchantProfile.accounting.venue,
     version: activeMerchantProfile.accounting.version,
+    admin: activeMerchantProfile.accounting.admin,
   },
   upload: {
     noSupplierPdf: ['invoices', 'NoSupplier', 'NoSupplier.pdf'],

@@ -5,6 +5,7 @@ export type MerchantTrackingCategories = {
   customer?: string;
   venue?: string;
   version?: string;
+  admin?: string;
 };
 
 export type MerchantProfile = {
@@ -58,6 +59,7 @@ export const merchantProfiles = {
       customer: optionalEnv('XERO_CUSTOMER'),
       venue: optionalEnv('XERO_VENUE'),
       version: optionalEnv('XERO_VERSION'),
+      admin: envOrDefault('XERO_ADMIN', 'HR'),
     },
   },
   SAGE: {
@@ -79,6 +81,7 @@ export const merchantProfiles = {
       // SH Productions Ltd
       venue: optionalEnv('Downstairs Dean St'),
       version: optionalEnv('SAGE_VERSION'),
+      admin: envOrDefault('SAGE_ADMIN', 'HR'),
     },
   },
 } satisfies Record<MerchantType, MerchantProfile>;
